@@ -63,32 +63,21 @@ router.get("/setavator/:id",ensureAuthenticated,(req,res) => {
 })
 //上传业务逻辑处理
 router.post("/setavator/:id",urlencodedParser,(req,res,next) => {
-  var timestamp=Date.parse(new Date());
+  // var timestamp=Date.parse(new Date());
   
-  // res.send("register");
+  // 用ID 作后缀
   var form = new formidable.IncomingForm();
   form.uploadDir = path.normalize(__dirname + '/../public/avator');
   form.parse(req, (err, fields, files) => {
     var oldpath = files.avator.path;
-    var newpath = path.normalize(__dirname + '/../public/avator') + '/' + timestamp + '.jpg';
+    var newpath = path.normalize(__dirname + '/../public/avator') + '/' + req.params.id + '.jpg';
     fs.rename(oldpath, newpath, (err) => {
       if (err) {
         res.send('失败！');
         return;
       }
-      var avator = timestamp + '.jpg';
+      var avator = req.params.id + '.jpg';
       //更改数据库当前用户的avatar这个值
-      
-/*
-      db.updateMany("users", {"name": '1万卡'}, {
-        $set: {"avator": req.session.avator}
-        }, function (err, results) {
-        // 跳转到切的业务
-        res.redirect('/');
-      });
-*/
-
-
 
       User.findOne({
         _id:req.params.id
