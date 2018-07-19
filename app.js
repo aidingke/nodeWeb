@@ -55,6 +55,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 // 使用静态文件
 app.use(express.static(path.join(__dirname,'public')));
+// app.use(express.static(path.join(__dirname,'avator')));
 
 // method-override middleware
 app.use(methodOverride('_method'));

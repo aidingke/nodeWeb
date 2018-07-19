@@ -4,8 +4,11 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const router = express.Router();
-
-
+const formidable = require('formidable');
+const path = require('path');
+const fs = require('fs');
+var db = require('../config/db.js');
+const {ensureAuthenticated} = require('../helpers/auth');
 
 // body-parser middleware
 var jsonParser = bodyParser.json();
@@ -51,6 +54,77 @@ router.post("/login",urlencodedParser,(req,res,next) => {
         });
       })*/
 })
+
+
+
+//上传头像
+router.get("/setavator/:id",ensureAuthenticated,(req,res) => {
+  res.render("users/setavator");
+})
+//上传业务逻辑处理
+router.post("/setavator/:id",urlencodedParser,(req,res,next) => {
+  var timestamp=Date.parse(new Date());
+  
+  // res.send("register");
+  var form = new formidable.IncomingForm();
+  form.uploadDir = path.normalize(__dirname + '/../public/avator');
+  form.parse(req, (err, fields, files) => {
+    var oldpath = files.avator.path;
+    var newpath = path.normalize(__dirname + '/../public/avator') + '/' + timestamp + '.jpg';
+    fs.rename(oldpath, newpath, (err) => {
+      if (err) {
+        res.send('失败！');
+        return;
+      }
+      var avator = timestamp + '.jpg';
+      //更改数据库当前用户的avatar这个值
+      
+/*
+      db.updateMany("users", {"name": '1万卡'}, {
+        $set: {"avator": req.session.avator}
+        }, function (err, results) {
+        // 跳转到切的业务
+        res.redirect('/');
+      });
+*/
+
+
+
+      User.findOne({
+        _id:req.params.id
+      })
+      .then((user)=>{
+        user.avator = avator;
+   
+        user.save().then(user=>{
+          req.flash("success_msg","头像更新成功");
+          res.redirect('/ideas');
+        })
+      })
+
+
+  /*User.findOne({_id:req.params.id})
+      .then((user) => {
+        if(!user){
+          req.flash("error_msg","用户不存在!");
+          res.redirect("/users/login");
+          return;
+        }else{
+          console.log('用户存在!');
+        }
+      })*/
+
+
+
+
+
+
+
+    });
+  });
+})
+
+
 
 
 router.get("/register",(req,res) => {

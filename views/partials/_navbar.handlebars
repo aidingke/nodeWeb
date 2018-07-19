@@ -2,6 +2,13 @@
 <nav class="navbar navbar-expand-sm navbar-dark bg-primary mb-3">
   <div class="container">
     <a class="navbar-brand" href="/">node demo</a>
+    {{#if user}}
+      <span style="position: absolute;left: 45%;top: 0.6rem;">
+        <a style="color:#fff;" href="/users/setavator/{{user.id}}" class="nav-link">
+        <img src="/avator/{{user.avator}}" style="width:2rem;"/>
+        {{user.name}}</a>
+      </span>
+    {{/if}}
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
       aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
