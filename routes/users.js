@@ -7,7 +7,7 @@ const router = express.Router();
 const formidable = require('formidable');
 const path = require('path');
 const fs = require('fs');
-var db = require('../config/db.js');
+const pubFun = require('../config/public.js');
 const {ensureAuthenticated} = require('../helpers/auth');
 
 // body-parser middleware
@@ -154,10 +154,18 @@ router.post("/register",urlencodedParser,(req,res) => {
           req.flash("error_msg","邮箱已经存在, 请更换邮箱注册~!");
           res.redirect("/users/register");
         }else{
+          var timestamp=new Date().getTime();
+          var timeNow = pubFun.dateFormat(timestamp,'Y年m月d日 H时i分s秒');
+
+          // 头像用默认的
+          var avator = 'head.jpg';
+
           const newUser = new User({
             name:req.body.name,
             email:req.body.email,
-            password:req.body.password
+            password:req.body.password,
+            date:timeNow,
+            avator:avator
           })
 
           bcrypt.genSalt(10, (err, salt) => {

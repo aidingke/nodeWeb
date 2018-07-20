@@ -1,7 +1,7 @@
 {{#each ideas}}
   <div class="card card-body mb-2">
     <h4>{{title}}</h4>
-    <p>{{details}}</p>
+    <div class="conts">{{details}}</div>
     <p>{{date}}</p>
     <a href="/ideas/edit/{{id}}" class="btn btn-default btn-block" style="border:1px solid #ccc;background: #eee;">编辑</a>
 
@@ -13,3 +13,6 @@
 {{else}}
   <p>还没有任何想学的课程!</p>
 {{/each}}
+
+
+
