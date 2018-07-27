@@ -1,11 +1,13 @@
 const express = require("express");
+const app = express();
 const path = require('path');
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
 const router = express.Router();
 const pubFun = require('../config/public.js');
 const {ensureAuthenticated} = require('../helpers/auth');
-// const ueditor = require("../public/ueditor");
+const ueditor = require("ueditor");
+
 
 // var app = express();
 
@@ -36,6 +38,26 @@ router.get("/",ensureAuthenticated,(req,res)=>{
 router.get("/add",ensureAuthenticated,(req,res)=>{
   res.render("ideas/add");
 })
+
+
+//去到查看页面查看详情
+router.get("/details/:id",ensureAuthenticated,(req,res)=>{
+  Idea.findOne({
+    _id:req.params.id
+  })
+  .then( idea => {
+    if(idea.user != req.user.id){
+      req.flash("error_msg","非法操作~!");
+      res.redirect("/ideas");
+    }else{
+      res.render("ideas/details",{
+        idea:idea
+      });
+    }
+  })  
+})
+
+
 //去到编辑页面查找一条记录
 router.get("/edit/:id",ensureAuthenticated,(req,res)=>{
   Idea.findOne({
@@ -61,6 +83,9 @@ router.post("/",urlencodedParser,(req,res)=>{
   let errors =[];
   if(!req.body.title){
     errors.push({text:"请输入标题!"});
+  }
+  if(!req.body.description){
+    errors.push({text:"请输入简短描述!"});
   }
   if(!req.body.details){
     errors.push({text:"请输入详情!"});
@@ -105,6 +130,8 @@ router.put("/:id",urlencodedParser,(req,res)=>{
   .then(idea=>{
     idea.title = req.body.title;
     idea.details = req.body.details;
+    idea.description = req.body.description;
+    
     idea.date = timeNow;
     idea.save()
       .then(idea => {
@@ -124,39 +151,6 @@ router.delete("/:id",ensureAuthenticated,(req,res)=>{
     res.redirect("/ideas");
   })
 })
-
-
-
-/*app.use("/ueditor/ueditor", ueditor(path.join(__dirname, 'public'), function(req, res, next) {
-    // ueditor 客户发起上传图片请求
-    if (req.query.action === 'uploadimage') {
-        var foo = req.ueditor;
-        
-        var imgname = req.ueditor.filename;
-
-        var img_url = '/images/ueditor/';
-        //你只要输入要保存的地址 。保存操作交给ueditor来做
-        res.ue_up(img_url); 
-    }
-    //  客户端发起图片列表请求
-    else if (req.query.action === 'listimage') {
-        var dir_url = '/images/ueditor/';
-        // 客户端会列出 dir_url 目录下的所有图片
-        res.ue_list(dir_url); 
-    }
-    // 客户端发起其它请求
-    else {
-        res.setHeader('Content-Type', 'application/json');
-        res.redirect('/ueditor/nodejs/config.json');
-    }
-}));*/
-
-
-
-
-
-
-
 
 
 module.exports = router;

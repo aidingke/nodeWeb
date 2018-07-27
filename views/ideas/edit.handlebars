@@ -18,11 +18,15 @@
     <input type="hidden" name="_method" value="PUT">
     <div class="form-group">
       <label for="title">标题</label>
-      <input type="text" class="form-control" name="title" value="{{idea.title}}">
+      <input type="text" class="form-control title" name="title" value="{{idea.title}}">
+    </div>
+    <div class="form-group">
+      <label for="title">内容简介</label>
+      <textarea style="height:100px;border:none;" class="form-control" id="description" name="description">{{idea.description}}</textarea>
     </div>
     <div class="form-group">
       <label for="details">详情</label>
-      <textarea style="height:200px;" class="form-control" id="article_editor" name="details">{{idea.details}}</textarea>
+      <textarea style="height:350px;" class="form-control" id="article_editor" name="details">{{idea.details}}</textarea>
     </div>
     <button type="submit" class="btn btn-primary">编辑</button>
   </form>
@@ -33,26 +37,53 @@
 <script type="text/javascript" charset="utf-8" src="/ueditor/ueditor.all.min.js"> </script>
 <script type="text/javascript" charset="utf-8" src="/ueditor/lang/zh-cn/zh-cn.js"> </script>
 
-<script id="editor" type="text/plain" style="width:1000px;height:500px;"></script>
-<script>
-    //var ue = UE.getEditor('editor');
 
-    var editor = creat_editor('article_editor');
-    editor.setContent('{{idea.details}}');//给编辑器赋值
-    
+<script>
+var dep_editor = creat_editor2('description');
+    dep_editor.setContent('{{idea.description}}');//给编辑器赋值
+  
+  //编辑器配置语句要放在textarea加载之后调用
+  function creat_editor2(dom_name) {
+    var obj = {
+        //提交表单的域名，服务端可以通过$_POST["content"]接收数据
+        textarea: "content",
+        //编辑器的最小高度
+        minFrameHeight:500,
+        //让编辑器的编辑框部分可以随着编辑内容的增加而自动长高
+        autoHeightEnabled:false,
+        //启用编辑器工具栏浮动
+        autoFloatEnabled: true,
+        //定义工具栏
+        toolbars:[["Source","Bold","Underline","InsertImage","Emotion"]],
+        //关闭左下角path路径提示
+        elementPathEnabled : false,
+        //右下角字数提示配置，允许的最大字符数
+        maximumWords:540,
+        //关闭右下角字数统计提示
+        wordCount:true
+    };
+    var editor = new baidu.editor.ui.Editor(obj);
+      editor.render(dom_name);
+    return editor;
+  }
+</script>
+
+
+
+<script>
     //编辑器配置语句要放在textarea加载之后调用
     function creat_editor(dom_name) {
         var obj = {
         //提交表单的域名，服务端可以通过$_POST["content"]接收数据
         textarea: "content",
         //编辑器的最小高度
-        //minFrameHeight:500,
+        minFrameHeight:500,
         //让编辑器的编辑框部分可以随着编辑内容的增加而自动长高
         autoHeightEnabled:false,
         //启用编辑器工具栏浮动
         autoFloatEnabled: true,
         //定义工具栏
-        toolbars:[["Source","Bold","Underline","JustifyLeft","JustifyCenter","JustifyRight","ForeColor","Undo","Redo","FontFamily","FontSize","InsertImage","Emotion","InsertVideo","Link","Map",'Preview','FullScreen']],
+        toolbars:[["Source","Bold","Underline","JustifyLeft","JustifyCenter","JustifyRight","ForeColor","Undo","Redo","FontFamily","FontSize","InsertImage","Emotion","InsertVideo","Link","Map",'Preview','inserttable','FullScreen']],
         //关闭左下角path路径提示
         elementPathEnabled : false,
         //右下角字数提示配置，允许的最大字符数
@@ -63,5 +94,42 @@
       var editor = new baidu.editor.ui.Editor(obj);
         editor.render(dom_name);
       return editor;
-  }
+    }
+
+var editor = creat_editor('article_editor'),valDetails;
+editor.setContent('{{idea.details}}');//给编辑器赋值
+
+//对编辑器的操作最好在编辑器ready之后再做
+editor.ready(function() {
+    //设置编辑器的内容
+    valDetails = editor.getContent();
+});
+
+</script>
+
+
+
+
+
+<script>
+    $(function(){
+      $('.btn-primary').click(function(){
+        if($('.title').val().length==0)
+        {
+          o.creatDialog('标题不能为空');
+          return false;
+        }
+        
+        if(dep_editor.getContent().length==0)
+        {
+          o.creatDialog('简介不能为空');
+          return false;
+        }
+        if(editor.getContent().length==0)
+        {
+          o.creatDialog('内容不能为空');
+          return false;
+        }
+      })
+    })
 </script>

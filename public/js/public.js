@@ -1,10 +1,12 @@
+
+// (function($){
 var o = {
 	//初始化
 	init : function () {
 		o.initHtml();
 		o.bind();
-		o.getHtmlString('.conts');
-		o.initFloatBtn();
+		// o.getHtmlString('.conts');
+		// o.initFloatBtn();
 	},
 	//初始化绑定事件
 	bind : function () {
@@ -32,15 +34,44 @@ var o = {
 	      // domEle == this 
 	      $(domEle).html($(domEle).text());  
 	    });
+	},
+	creatDialog:function(x,w,h){
+		// w?w:'320';
+		// h?h:320;
+		if(typeof w == "undefined" || w == null || w == ""){
+	        w=320;
+	    }
+	    if(typeof h == "undefined" || h == null || h == ""){
+	        // h=320;
+	    }
+		art.dialog({
+          id: 'msg',
+          title: '温馨提示',
+          content: x,
+          width: w,
+          height: h,
+          lock:'true',
+          fixed: true,
+          drag: false,
+          resize: false
+        })
+        art.dialog({id: 'msg'}).title('2秒后关闭').time(2);
+	},
+	creatTips:function(x){
+		var dg = art.dialog({title:false, content:x}).time(2);;
 	}
 }
 //初始化webSite对象
 o.init();
+// console.log(o.getHtmlString)
+// $.extend({
+// 	getHtmlString:o.getHtmlString,
+// 	age:1000
+// })
+	
+
+// })(jQuery)
 
 
-jQuery.extend({
-		o:{
-			name:'323232'
-		}
-	})
+
 	

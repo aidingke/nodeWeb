@@ -1,14 +1,17 @@
 {{#each ideas}}
   <div class="card card-body mb-2">
     <h4>{{title}}</h4>
-    <div class="conts">{{details}}</div>
+    <div class="conts">{{description}}</div>
+    <div class="contkk hid">{{details}}</div>
     <p>{{date}}</p>
-    <a href="/ideas/edit/{{id}}" class="btn btn-default btn-block" style="border:1px solid #ccc;background: #eee;">编辑</a>
-
-    <form method="POST" action="/ideas/{{id}}?_method=DELETE">
-      <input type="hidden" name="method" value="DELETE">
-      <input type="submit" class="btn btn-danger btn-block" style="border:1px solid #ccc;background: #999;" value="删除">
-    </form>
+    <div class="moreBtn">
+      <a href="/ideas/details/{{id}}" class="btn btn-info">查看详情</a>
+      <a href="/ideas/edit/{{id}}" class="btn btn-success">编辑</a>
+      <form method="POST" action="/ideas/{{id}}?_method=DELETE" style="display: inline;">
+        <input type="hidden" name="method" value="DELETE">
+        <input type="submit" class="btn btn-default" value="删除">
+      </form>
+    </div>
   </div>
 {{else}}
   <p>还没有任何想学的课程!</p>
