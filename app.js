@@ -84,12 +84,32 @@ app.use((req,res,next) => {
 
 
 //配置路由
-app.get("/",(req,res)=>{
-	const title ="大家好，来看看demo";
-	res.render("index",{
-		title:title
-	}); //去到首页模版
+app.get("/",urlencodedParser,(req,res)=>{
+	const title ="欢迎各位亲分享技术";
+
+	Idea.find({})
+		.sort({date:"desc"})
+		.then(ideas=>{
+			console.log(ideas)
+			res.render("index",{
+			ideas:ideas
+		});
+	})//去到首页模版
 })
+
+//去到查看页面查看详情
+app.get("/details/:id",urlencodedParser,(req,res)=>{
+  Idea.findOne({
+    _id:req.params.id
+  })
+  .then( idea => {
+  	  res.render("ideas/details",{
+	    idea:idea
+	  }); 
+  }) 
+})
+
+
 app.get("/about",(req,res)=>{
 	res.render("about");
 })

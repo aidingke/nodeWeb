@@ -78,7 +78,7 @@ router.get("/edit/:id",ensureAuthenticated,(req,res)=>{
 
 
 //去到post
-router.post("/",urlencodedParser,(req,res)=>{
+router.post("/",ensureAuthenticated,(req,res)=>{
   // console.log(req.body);
   let errors =[];
   if(!req.body.title){
@@ -93,9 +93,9 @@ router.post("/",urlencodedParser,(req,res)=>{
   if(errors.length>0){
     // console.log(errors);
     res.render("ideas/add",{
-      errors:errors,
-      title:req.body.title,
-      details:req.body.details
+      errors:errors
+      // title:req.body.title,
+      // details:req.body.details
     })//检验出错回到这个页面
   }else{
     // res.send("ok");
@@ -105,6 +105,7 @@ router.post("/",urlencodedParser,(req,res)=>{
     const newUser = {
       title:req.body.title,
       details:req.body.details,
+      description:req.body.description,
       user:req.user.id,
       date:timeNow
     }
